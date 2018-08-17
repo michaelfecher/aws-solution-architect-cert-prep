@@ -46,7 +46,7 @@ C compute
 P graphics  
 X extreme memory  
 
-## EBS
+## EBS (Elastic Block Store)
 Storage volume, can be attached to EC2 instances  
 When attached, then FS on top of those can be created.  
 Block Device.  
@@ -63,3 +63,91 @@ Termination protection is turned off by default.
 On an EBS backed instance, the default action is for the root EBS to be deleted after instance is terminated.  
 EBS Root volume cannot be encrypted by default, only via BitLocker or an own AMI with an encrypted root EBS volume.  
 Additional volumes can be encrypted.  
+
+## EBS Extended
+Volume exist on EBS (Virtual Hard Disk).  
+Volume and EC2 instance need to be in the same AZ (obviously).
+It's also possible to migrate or copy the EC2 instance directly to another AZ.  
+EBS volume size change on the fly, including changing size and storage type.
+
+### Snapshots
+Snapshots are point in time copies of columes and are incremental.
+Snapshots exist on S3.  
+Stop the EC2 instance before taking a snapshot, but it works also with a running instance.  
+Amazaon Machine Images (AMI) can be created from EBS-backed instances and snapshots.
+
+Moving a volume from one AZ/Region to another:
+- create a snapshot of the volume
+- copy the snapshot to the new AZ/region
+- create a new image (AMI) from the snapshot
+
+### Volume vs Snapshots - Security
+Snapshots of encrypted volumes are encrypted automatically.  
+Volumes restored from encrypted snapshots are encrypted automatically.  
+Share snapshots, but only if they are unencrypted.  
+Unencrypted snaps can be shared with other AWS accounts or made public.
+
+## RAID, Volumes & Snapshots
+Multiple Volumes can form a (Software) RAID.  
+RAID = Redundant Array of Independent Disks
+- RAID 0: Striped, no Redundancy, Good Performance (e.g. Gaming PC)
+- RAID 1: Mirrored, Redundancy 
+- RAID 5: Good for reads, bad for writes, AWS doesn't recommend this
+- RAID 10: Striped & Mirrored, Good Redundancy, Good Performance
+
+Usudally Raid0 or Raid10 is used..  
+
+It's also possible to create snapshots of a RAID.
+
+## EBS vs Instance Store
+All AMIs are categorized as either backed by Amazon EBS or backed by instance store.  
+Both are volumes.  
+### EBS volume
+The root device of an AMI is a EBS volume from an EBS snapshot.
+Faster provision time than Instance Stores.
+Newer than Instance Store Volumes.
+EBS backed instances can be stopped and you will not lose data if stopped.
+On Termination, you got the option to keep the root device volume (not by default).
+
+### Instance Store volume
+root device of an AMI is an instance store volume from a *template* stored in S3.  
+Also called Ephemeral Storage.
+Instance Stores can not be stopped. If the underlying host fails, you'll lose the data.
+No option to keep the root device volume on instance termination.
+
+## Security Groups
+All Inbound traffic is blocked by default.  
+All Outbound traffic is allowed. It's also is implicitly set if an inbound rule is applied (Stateful).
+ACLs on the other side are stateless, means explicit setting for the outbound rule.  
+Changes to Security Groups are applied immediately.  
+Security Groups can contain 0-n EC2 instances.  
+An EC2 instance can have multiple Security Groups.  
+IP address blocking can be done with Network Access Control Lists, NOT with Security Groups.  
+You can specifiy Allow rules, but not Deny rules. Denial is done via removing the "Allowing".
+
+## Elastic Load Balancers (ELB)
+3 Types. 
+Load Balancing error can be 504 (Gateway timeout), which is possibly an application error after the LB or with the infrastructure.
+Instances monitored by ELB are reported in the following state:
+- InService
+- OutOfService
+
+Health Checks are used to check the instance state by pinging.
+All ELB have an own DNS name and NO public IP.
+
+### Application Load Balancers
+best suited for HTTP/HTTPS balancing traffic.  
+Operate at layer 7 and therefore application-aware.    
+Intelligent via advanced request routing.  
+
+### Network Load Balancers
+suited for TCP traffic achieving extreme performance (layer 4).  
+Handling millions of requests per second while maintaining ultra-low latency.
+
+### Classic Load Balancers
+Legacy.  
+Amazon recommends to use Application Load Balancer.
+Layer-7 and Layer-4 balancing possible.  
+
+### X-Forwarded-For Header
+passes the public IP address to the EC2 address of the client over the Load Balancer via HTTP.
