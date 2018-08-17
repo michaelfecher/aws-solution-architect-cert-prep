@@ -214,3 +214,20 @@ For high throughput, low latency usage or both.
 Distinct underlying hardware.  
 Recommended for small applications, which have a small number of critical instances that should be kept separate.  
 
+## EFS (Elastic File System)
+File storage service within AWS.
+
+Features.
+- needs no pre-provision in comparison to EBS (pay per usage)
+- block oriented
+- scale up to peta bytes
+- thousands of concurrent NFS connections
+- supports Network File System Protocol (NFSv4)
+- stored over multiple AZs within a region
+- read after write consistency
+
+Mounting in EC2 instance of the EFS, which makes a super cool sharing (repository) possible over multiple instances.
+EBS volumes can be used in comparison only in one instance.
+EFS has to be in the same Security Group as the instances, which want to use it.
+
+
