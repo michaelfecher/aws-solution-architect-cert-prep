@@ -151,3 +151,44 @@ Layer-7 and Layer-4 balancing possible.
 
 ### X-Forwarded-For Header
 passes the public IP address to the EC2 address of the client over the Load Balancer via HTTP.
+
+## CloudWatch
+for performance monitoring AWS resources.  
+Dashboards  
+Alarms  
+Events - respond to state changes of the AWS resources  
+Logs - aggregate, store and monitor logs by installing an agent on the EC2 server
+CloudTrail is for auditing.. monitor the whole AWS environment
+
+## AWS CLI
+If using AWS CLI in an EC2 instance directly and not on a local computer, assign a role with the needed policies to the EC2.  
+This avoids storing credentials on the EC2 directly.
+
+When accessing a S3 bucket, then make use of the `--region` argument and provide the region of the requested S3 bucket.
+If not provided, then the EC2 instance maybe can not access the bucket, because it's in a different AZ/region at the moment of time.
+So without the argument it's not predictable if it's working.
+
+## EC2 Metadata
+Extracted from [UserGuide EC2 MetaData](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).  
+To view all categories of instance metadata from within a running instance, use the following URI: 
+```
+curl http://169.254.169.254/latest/meta-data/
+```
+With the help of this, information about the EC2 instance can be extracted and proceeded further, e.g. storing in a S3 bucket, from the bucket to a lambda...
+
+# Launch Configurations & Auto Scaling
+Launch configuration is basically the provisioning (selection of AMI, type).  
+It's needed for the Auto Scaling.
+
+In the Auto Scaling, we can define Launch configuration, the network and the subnet. So the subnet is the key aspect here, because
+it reflects the AZ/regions. 
+So when having auto scaling wanted, use as much subnets as possible. Otherwise it's pointless.
+
+Scaling policies are basically threshold based scaling options, like CPU spikes over 90% for X minutes.
+There are two options:
+- Decreasing policy: This describes the condition to be true in order to start/add new instances
+- Increasing policy: This describes the condition in order to shutdown/remove instances
+
+After setting the Auto scaling and the policies, the EC2 instances start up automatically.
+When deleting the Auto scaling setting, the EC2 instances will be removed automatically.
+
