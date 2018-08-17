@@ -176,7 +176,7 @@ curl http://169.254.169.254/latest/meta-data/
 ```
 With the help of this, information about the EC2 instance can be extracted and proceeded further, e.g. storing in a S3 bucket, from the bucket to a lambda...
 
-# Launch Configurations & Auto Scaling
+## Launch Configurations & Auto Scaling
 Launch configuration is basically the provisioning (selection of AMI, type).  
 It's needed for the Auto Scaling.
 
@@ -191,4 +191,26 @@ There are two options:
 
 After setting the Auto scaling and the policies, the EC2 instances start up automatically.
 When deleting the Auto scaling setting, the EC2 instances will be removed automatically.
+
+## Placement Groups
+When the exams talks about PG, it's meaning Clustered PG.
+There are two types:
+- Clustered Placement Groups
+- Spread Placement Groups
+
+Groups together similiar types of instances.
+Name is unique for whole AWS account.  
+Only certain types of instances can be run in a Placement Group.  
+AWS recommends homogenous types of instances within a PG.  
+Merging of PGs are not working.  
+Moving a new instance to an existing PG is not working. Instead create an AMI from an existing instance within the PG 
+and then launch the new instance of the AMI in that PG.
+
+### Clustered Placement Group
+Single AZ/Region.  
+For high throughput, low latency usage or both.
+
+### Spread Placement Group
+Distinct underlying hardware.  
+Recommended for small applications, which have a small number of critical instances that should be kept separate.  
 
