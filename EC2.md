@@ -250,6 +250,6 @@ Services: S3, API GW, Lambda, DynamoDB are serverless
 One Lambda can trigger another... nice chaining  
 Architecture can get complicated, but there is a AWS X-Ray Service to debug the architecture  
 Lambdas are acting globally  
-Duration time of one Lambda is 5 minutes. Mitigation is to split the lambda up.
+Execution time of one Lambda is limited to 5 minutes. Mitigation is to split the lambda up.
 
 
