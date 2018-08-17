@@ -226,8 +226,30 @@ Features.
 - stored over multiple AZs within a region
 - read after write consistency
 
-Mounting in EC2 instance of the EFS, which makes a super cool sharing (repository) possible over multiple instances.
-EBS volumes can be used in comparison only in one instance.
+Mounting in EC2 instance of the EFS, which makes a super cool sharing (repository) possible over multiple instances.  
+EBS volumes can be used in comparison only in one instance.  
 EFS has to be in the same Security Group as the instances, which want to use it.
+
+## Lambda
+Run ONLY code, without provisioning hardware, OS, configuration of compilers...  
+A lambda is called by *Triggers*.
+A Trigger can be:
+- API Gateway
+- SNS
+- CloudWatch
+- other Lambda
+- S3 bucket change
+- DynamoDB
+- CloudFront change
+
+Lambda scales out (not up! Up Scaling is in terms of CPU/RAM while scaling out is in the number of instances)  
+NO Server  
+Cheap (1 million is free. Next million costs 
+1 event = 1 function ... means that 100 HTTP requests execute 100 lambda functions  
+Services: S3, API GW, Lambda, DynamoDB are serverless  
+One Lambda can trigger another... nice chaining  
+Architecture can get complicated, but there is a AWS X-Ray Service to debug the architecture  
+Lambdas are acting globally  
+Duration time of one Lambda is 5 minutes. Mitigation is to split the lambda up.
 
 
